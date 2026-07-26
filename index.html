@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Calculator</title>
+<style>
+  body { display:flex; justify-content:center; align-items:center; height:100vh; margin:0; background:#1f1c2c; font-family:sans-serif; }
+  .calc { background:#2e2e3e; padding:20px; border-radius:15px; width:280px; }
+  #display { width:100%; height:50px; font-size:24px; text-align:right; margin-bottom:10px; border:none; border-radius:8px; padding:5px 10px; box-sizing:border-box; }
+  .row { display:flex; gap:8px; margin-bottom:8px; }
+  button { flex:1; padding:15px; font-size:18px; border:none; border-radius:8px; background:#444; color:#fff; cursor:pointer; }
+  button:active { transform:scale(0.95); }
+  .op { background:#ff9f43; }
+  .eq { background:#4cd97b; }
+  .clr { background:#ff5e57; }
+</style>
+</head>
+<body>
+
+<div class="calc">
+  <input id="display" readonly value="0">
+  <div class="row">
+    <button class="clr" onclick="clr()">AC</button>
+    <button class="clr" onclick="del()">DEL</button>
+    <button class="op" onclick="op('%')">%</button>
+    <button class="op" onclick="op('/')">÷</button>
+  </div>
+  <div class="row">
+    <button onclick="num('7')">7</button><button onclick="num('8')">8</button>
+    <button onclick="num('9')">9</button><button class="op" onclick="op('*')">×</button>
+  </div>
+  <div class="row">
+    <button onclick="num('4')">4</button><button onclick="num('5')">5</button>
+    <button onclick="num('6')">6</button><button class="op" onclick="op('-')">−</button>
+  </div>
+  <div class="row">
+    <button onclick="num('1')">1</button><button onclick="num('2')">2</button>
+    <button onclick="num('3')">3</button><button class="op" onclick="op('+')">+</button>
+  </div>
+  <div class="row">
+    <button onclick="num('0')">0</button><button onclick="num('.')">.</button>
+    <button class="eq" onclick="calc()">=</button>
+  </div>
+</div>
+
+<script>
+  let d = document.getElementById('display');
+  let expr = '';
+  let reset = false;
+
+  function num(n) {
+    if (reset) { expr = ''; reset = false; }
+    expr += n;
+    d.value = expr;
+  }
+  function op(o) {
+    if (!expr) return;
+    expr += o;
+    d.value = expr;
+    reset = false;
+  }
+  function calc() {
+    try {
+      d.value = eval(expr.replace(/÷/g,'/').replace(/×/g,'*'));
+      expr = d.value.toString();
+      reset = true;
+    } catch { d.value = 'Error'; expr = ''; }
+  }
+  function clr() { expr = ''; d.value = '0'; }
+  function del() { expr = expr.slice(0,-1); d.value = expr || '0'; }
+
+  document.addEventListener('keydown', e => {
+    if (e.key >= '0' && e.key <= '9') num(e.key);
+    else if ('+-*/.'.includes(e.key)) op(e.key);
+    else if (e.key === 'Enter') calc();
+    else if (e.key === 'Backspace') del();
+    else if (e.key === 'Escape') clr();
+  });
+</script>
+
+</body>
+</html>
